@@ -245,5 +245,6 @@ def parser2(expert):
                 st.write(f"The average cost of flying from {destination} to {origin} is ${mean(dest_dict[origin][destination].values()):.2f}.")
     except:
         print("No data to parse. Please run the program again.")
+        st.experimental_rerun()
 
 
