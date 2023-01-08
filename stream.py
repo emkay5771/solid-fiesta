@@ -112,18 +112,21 @@ with st.form(key='my_form', clear_on_submit=False):
                                                             break                                                   
                                                     airlines.append(airlinefind[x].string)                                                    
                                                 x+=1
-                                                st.write("Line 115 is working.")
+                                                st.write("Line 115 is working. :thumbsup:")
                                             #secondary filter for airlines, to remove entries with spaces which are not airline names (primarily flight times) and non-airline results
                                             for air in airlines:
                                                 if " " in air and air not in arrays.airlinelist:
+                                                    st.write(f"{air} 😠")
                                                     pass
                                                 else:
                                                     new.append(air)
+                                                    st.write(f"{air} :airplane:")
 
                                             #make list of prices, removing blank entries
                                             for value in pricefind:
                                                 if pricefind[z].string != None: 
-                                                    prices.append(int(pricefind[z].string.lstrip('$')))    
+                                                    prices.append(int(pricefind[z].string.lstrip('$')))
+                                                    st.write(f"Price appended 💵")    
                                                 z+=1
 
                                             # match prices to airlines
