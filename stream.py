@@ -89,7 +89,8 @@ with st.form(key='my_form', clear_on_submit=False):
                                     try:
                                             # Get the data from the website, using the parameters from start.py, collected above
                                             try:
-                                                browser = requests.get(f'https://www.google.com/search?q=fly{airline}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}', cookies={'__Secure-1PAPISID': '4bYXb6FLjL-cdjAb/ApwT_-cO23PlswA6F'})
+                                                headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+                                                browser = requests.get(f'https://www.google.com/search?q=fly{airline}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}', headers = headers)
                                                 print(f'https://www.google.com/search?q=fly{airline}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}')
                                             except:
                                                 st.write("Error: Could not connect to Google. Please try again later.")
