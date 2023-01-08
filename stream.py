@@ -105,6 +105,10 @@ with st.form(key='my_form', clear_on_submit=False):
                                             airlines, prices, new=[], [], []
                                             x=0
                                             z=0
+                                            y=0
+                                            while y <= len(airlinefind):
+                                                st.write(f"airlinefind: {airlinefind[y].string}; position {y}")
+                                                y+=1
                                             #first layer filters out non-airline results, specifically empty strings, long ones (>19), and southwest (doesn't display price)
                                             for air in airlinefind:
                                                 if airlinefind[x].string != None and airlinefind[x].string != 'Southwest':
