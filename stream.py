@@ -90,6 +90,7 @@ with st.form(key='my_form', clear_on_submit=False):
                                             browser = requests.get(f'https://www.google.com/search?q=fly{airline}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}')
                                             print(f'https://www.google.com/search?q=fly{airline}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}')
                                             soup = BeautifulSoup(browser.content, 'html.parser')
+                                            st.write(soup)
                                             #collect all potential airlines from the page, using the class name
                                             airlinefind = soup.find_all(class_='BNeawe s3v9rd AP7Wnd')
                                             #collect all potential prices from the page, using the class name
