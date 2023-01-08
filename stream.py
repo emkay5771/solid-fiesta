@@ -89,7 +89,7 @@ with st.form(key='my_form', clear_on_submit=False):
                                     try:
                                             # Get the data from the website, using the parameters from start.py, collected above
                                             try:
-                                                browser = requests.get(f'https://www.google.com/search?q=fly{airline}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}')
+                                                browser = requests.get(f'https://www.google.com/search?q=fly{airline}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}', cookies={'__Secure-1PAPISID': '4bYXb6FLjL-cdjAb/ApwT_-cO23PlswA6F'})
                                                 print(f'https://www.google.com/search?q=fly{airline}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}')
                                             except:
                                                 st.write("Error: Could not connect to Google. Please try again later.")
@@ -106,9 +106,9 @@ with st.form(key='my_form', clear_on_submit=False):
                                             x=0
                                             z=0
                                             y=0
-                                            while y <= len(airlinefind):
+                                            '''while y <= len(airlinefind):
                                                 st.write(f"airlinefind: {airlinefind[y].string}; position {y}")
-                                                y+=1
+                                                y+=1'''
                                             #first layer filters out non-airline results, specifically empty strings, long ones (>19), and southwest (doesn't display price)
                                             for air in airlinefind:
                                                 if airlinefind[x].string != None and airlinefind[x].string != 'Southwest':
