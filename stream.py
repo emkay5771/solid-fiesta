@@ -112,7 +112,7 @@ with st.form(key='my_form', clear_on_submit=False):
                                                             break                                                   
                                                     airlines.append(airlinefind[x].string)                                                    
                                                 x+=1
-                                                st.write("Line 115 is working. :thumbsup:")
+                                                st.write(f"{air} :thumbsup:")
                                             #secondary filter for airlines, to remove entries with spaces which are not airline names (primarily flight times) and non-airline results
                                             for air in airlines:
                                                 if " " in air and air not in airlinelist:
