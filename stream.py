@@ -166,6 +166,11 @@ with st.form(key='my_form', clear_on_submit=False):
                                     # If it can't get the data, skip the entry and inform the user.
                                     except:
                                             # If specific airline is selected, skip the entry and inform the user.
+                                            if soup != '':
+                                                st.write(f"{soup}")
+                                            else:
+                                                st.write("Error: Could not connect to Google to retrieve data. Please try again later.")
+                                                
                                             if airline != '':
                                                     print(f"Couldn't find a flight from {origins} to {destination} on {date}, flying exclusively on {airline.lstrip('+').capitalize()}. Please try again.")
                                                     st.write(f"Couldn't find a flight from {origins} to {destination} on {date}, flying exclusively on {airline.lstrip('+').capitalize()}. Please try again.")
