@@ -78,10 +78,10 @@ with st.form(key='my_form', clear_on_submit=False):
                 nonstop = f''
                 print("Sure thing! We'll search for all flights, including those with with connections. \n")
 
-        if submit:
-            with st.spinner("Loading..."):                
-                for destination in dest:       
-                        for origins in origin:
+        if submit:               
+            for destination in dest:       
+                    for origins in origin:
+                        with st.spinner(f"Searching flights from {origins} to {destination}..."): 
                                 for date in date_list:
                     # Try to extract each flight price from Google search page and print
                                     
