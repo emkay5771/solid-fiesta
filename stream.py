@@ -109,10 +109,12 @@ with st.form(key='my_form', clear_on_submit=False):
                                             for air in airlinefind:
                                                 if airlinefind[x].string != None and airlinefind[x].string != 'Southwest':
                                                     if len(airlinefind[x].string) > 19:
-                                                            break                                                   
-                                                    airlines.append(airlinefind[x].string)                                                    
+                                                        st.write(f"Broke at 112; {airlinefind[x].string} :thumbsdown:")
+                                                        break                                                   
+                                                    airlines.append(airlinefind[x].string)
+                                                    st.write(f"{airlinefind[x].string} :thumbsup:")                                                    
                                                 x+=1
-                                                st.write(f"{air} :thumbsup:")
+                                                
                                             #secondary filter for airlines, to remove entries with spaces which are not airline names (primarily flight times) and non-airline results
                                             for air in airlines:
                                                 if " " in air and air not in airlinelist:
