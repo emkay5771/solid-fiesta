@@ -171,11 +171,23 @@ with st.form(key='my_form', clear_on_submit=False):
                                             if airlinefind == '':
                                                 st.write("No Airlinefind :shrug:")
                                             else:
-                                                st.write(f"{airlinefind}")
+                                                st.write(f"Found AirlineFind :thumbsup:")
                                             if pricefind == '':
                                                 st.write("No Pricefind :shrug:")
                                             else:
-                                                st.write(f"{pricefind}")
+                                                st.write(f"Found Pricefind :thumbsup:")
+                                            if len(airlines) == 0:
+                                                st.write("No Airlines parsed list :shrug:")
+                                            else:
+                                                st.write(f"{airlines}")
+                                            if len(prices) == 0:
+                                                st.write("No Prices parsed list :shrug:")
+                                            else:
+                                                st.write(f"{prices}")
+                                            if len(new) == 0:
+                                                st.write("No New parsed list :shrug:")
+                                            else:
+                                                st.write(f"{new}")
                                                 
                                             if airline != '':
                                                     print(f"Couldn't find a flight from {origins} to {destination} on {date}, flying exclusively on {airline.lstrip('+').capitalize()}. Please try again.")
