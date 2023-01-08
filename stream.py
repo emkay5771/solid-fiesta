@@ -87,10 +87,15 @@ with st.form(key='my_form', clear_on_submit=False):
                                     
                                     try:
                                             # Get the data from the website, using the parameters from start.py, collected above
-                                            browser = requests.get(f'https://www.google.com/search?q=fly{airline}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}')
-                                            print(f'https://www.google.com/search?q=fly{airline}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}')
-                                            soup = BeautifulSoup(browser.content, 'html.parser')
-                                            st.write(soup)
+                                            try:
+                                                browser = requests.get(f'https://www.google.com/search?q=fly{airline}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}')
+                                                print(f'https://www.google.com/search?q=fly{airline}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}')
+                                            except:
+                                                st.write("Error: Could not connect to Google. Please try again later.")
+                                            try:
+                                                soup = BeautifulSoup(browser.content, 'html.parser')
+                                            except:
+                                                st.write("Error: Could not parse Google's response. Please try again later.")
                                             #collect all potential airlines from the page, using the class name
                                             airlinefind = soup.find_all(class_='BNeawe s3v9rd AP7Wnd')
                                             #collect all potential prices from the page, using the class name
