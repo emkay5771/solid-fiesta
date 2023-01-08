@@ -79,7 +79,6 @@ with st.form(key='my_form', clear_on_submit=False):
                 print("Sure thing! We'll search for all flights, including those with with connections. \n")
 
         
-        # Ask if they only want low cost flights
        
                         
         for destination in dest:       
