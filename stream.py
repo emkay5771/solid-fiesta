@@ -109,7 +109,7 @@ with st.form(key='my_form', clear_on_submit=False):
                                             for air in airlinefind:
                                                 if airlinefind[x].string != None and airlinefind[x].string != 'Southwest':
                                                     if len(airlinefind[x].string) > 19:
-                                                        st.write(f"Broke at 112; {airlinefind[x].string} :thumbsdown:")
+                                                        st.write(f"Broke at 112; {airlinefind[x].string}, position {x} :thumbsdown:")
                                                         break                                                   
                                                     airlines.append(airlinefind[x].string)
                                                     st.write(f"{airlinefind[x].string} :thumbsup:")                                                    
