@@ -8,6 +8,30 @@ import os
 from datetime import datetime, timedelta
 
  #TODO: Smartly determine if the user wants to include low cost airlines            
+def bugcheck():
+    # If specific airline is selected, skip the entry and inform the user.
+                                            if soup == '':
+                                                st.write("No Soup :shrug:")
+                                            if airlinefind == '':
+                                                st.write("No Airlinefind :shrug:")
+                                            else:
+                                                st.write(f"Found AirlineFind :thumbsup:")
+                                            if pricefind == '':
+                                                st.write("No Pricefind :shrug:")
+                                            else:
+                                                st.write(f"Found Pricefind :thumbsup:")
+                                            if len(airlines) == 0:
+                                                st.write("No Airlines parsed list :shrug:")
+                                            else:
+                                                st.write(f"{airlines}")
+                                            if len(prices) == 0:
+                                                st.write("No Prices parsed list :shrug:")
+                                            else:
+                                                st.write(f"{prices}")
+                                            if len(new) == 0:
+                                                st.write("No New parsed list :shrug:")
+                                            else:
+                                                st.write(f"{new}")
 
 def lowcosts():
     if airlinein != "":
@@ -88,10 +112,8 @@ with st.form(key='my_form', clear_on_submit=False):
                                     try:
                                             # Get the data from the website, using the parameters from start.py, collected above 
                                             localheaders={'User-Agent': 'python-requests/2.28.1', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'}
-                                            localheaderstest={'authority': 'ogs.google.com', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8', 'accept-encoding': 'gzip, deflate, br', 'accept-language': 'en-US,en;q=0.6', 'sec-fetch-dest': 'iframe', 'sec-fetch-mode': 'navigate', 'sec-fetch-site': 'same-site','User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36'}
-                                            cookie = {'cookie': 'S=billing-ui-v3=FH3Ei4-EY0uqZUFPl8OfAM-jtN0NKadZ:billing-ui-v3-efe=FH3Ei4-EY0uqZUFPl8OfAM-jtN0NKadZ; OTZ=6839603_76_76_104100_72_446760; SID=SQj585DMpqnMBddPNbpCTHZly72uZLt6jyfVjIdLdBL-nrz2kgeGb0_Kfv8C755Ss4JqLg.; __Secure-1PSID=SQj585DMpqnMBddPNbpCTHZly72uZLt6jyfVjIdLdBL-nrz2YMKId7aBOfm34WZpmwz-kA.; __Secure-3PSID=SQj585DMpqnMBddPNbpCTHZly72uZLt6jyfVjIdLdBL-nrz2RfOTKX2DOF8EQCp-XSBmSw.; HSID=A2e_YBYcdiQmoZclL; SSID=Awnhs3TcdI_wGCbRV; APISID=9Mzj9XE5jrf2O-GP/ATkcd_YhHd5ZMsM3u; SAPISID=4bYXb6FLjL-cdjAb/ApwT_-cO23PlswA6F; __Secure-1PAPISID=4bYXb6FLjL-cdjAb/ApwT_-cO23PlswA6F; __Secure-3PAPISID=4bYXb6FLjL-cdjAb/ApwT_-cO23PlswA6F; SEARCH_SAMESITE=CgQIpZcB; AEC=ARSKqsIlYUFrBWXKnuJ7jwPteR2P_jdkE7RKbE_PCPUKw5NIv_F1XbeokyQ; NID=511=QGftPUJhqj0dQRGutgWjGn92WwnRJ1iy1b1AoI9OGBdkcf_lQwTPa4tm2HOZvpAyqbCqyuqDcBlThxKbsjObtQpbvBWR_Lyi0wyXP7S8U2pwf5Nb0ajF824CFClqx8kr_NdIunkBYTkM3MMW61SxUon9L7FiHQLOL26rVPiwh8rMV0gIGpEzb-G2RAg_lr2dUOljqJq2T7aMOOcrHsZ-gVVSqkSX7Fy141AFgfG5BSxmEWLV8UnD54iUXPLidXrhoxEirh1EK33oG42i_MIismpYLQ2dGc8trcKa_TBK47N-f29Qm7qQ0XiAlFujvOedXa-eaeT1Du_N_1VZtpfze1w2bprP2SVNZvE9JQ5oeE2WpQ; 1P_JAR=2023-01-09-15; SIDCC=AIKkIs3Xq2EN90-AjpmzPuKrm73KqDoH-YtfpNufEqMly8MuOLZRKZRP2NV_i52zulmkb8xH-Y_C; __Secure-1PSIDCC=AIKkIs3nofYE3DM0oiR6vkzlUwR8aK9Uobrd-xweXdV11aaVODdITvFc4VyXYIoQnt2lCusk3oA; __Secure-3PSIDCC=AIKkIs03dMgnfe8oAgr5fXdB6lnbEP6pH-9tZhoK82vBrv7jC9WLlyu5wNl-Juooslpw2oJEZCGx'}
                                             otherheader={'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36'}
-                                            browser = requests.get(f'https://www.google.com/search?q=fly{airline}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}', headers=localheaders, cookies=cookie)
+                                            browser = requests.get(f'https://www.google.com/search?q=fly{airline}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}', headers=localheaders)
                                             soup = BeautifulSoup(browser.content, 'html.parser') 
                                             #collect all potential airlines from the page, using the class name
                                             airlinefind = soup.find_all(class_='BNeawe s3v9rd AP7Wnd')
@@ -106,26 +128,26 @@ with st.form(key='my_form', clear_on_submit=False):
                                             for air in airlinefind:
                                                 if airlinefind[x].string != None and airlinefind[x].string != 'Southwest':
                                                     if len(airlinefind[x].string) > 19:
-                                                        st.write(f"Broke at 112; {airlinefind[x].string}, position {x} :thumbsdown:")
+                                                        #st.write(f"Broke at 112; {airlinefind[x].string}, position {x} :thumbsdown:")
                                                         break                                                   
                                                     airlines.append(airlinefind[x].string)
-                                                    st.write(f"{airlinefind[x].string} :thumbsup:")                                                    
+                                                    #st.write(f"{airlinefind[x].string} :thumbsup:")                                                    
                                                 x+=1
                                                 
                                             #secondary filter for airlines, to remove entries with spaces which are not airline names (primarily flight times) and non-airline results
                                             for air in airlines:
                                                 if " " in air and air not in arrays.airlinelist:
-                                                    st.write(f"{air} 😠")
+                                                    #st.write(f"{air} 😠")
                                                     pass
                                                 else:
                                                     new.append(air)
-                                                    st.write(f"{air} :airplane:")
+                                                    #st.write(f"{air} :airplane:")
 
                                             #make list of prices, removing blank entries
                                             for value in pricefind:
                                                 if pricefind[z].string != None: 
                                                     prices.append(int(pricefind[z].string.lstrip('$')))
-                                                    st.write(f"Price appended 💵")    
+                                                    #st.write(f"Price appended 💵")    
                                                 z+=1
 
                                             # match prices to airlines
@@ -168,31 +190,7 @@ with st.form(key='my_form', clear_on_submit=False):
                                             f.close()
                                         
                                     # If it can't get the data, skip the entry and inform the user.
-                                    except:
-                                            # If specific airline is selected, skip the entry and inform the user.
-                                            if soup == '':
-                                                st.write("No Soup :shrug:")
-                                            if airlinefind == '':
-                                                st.write("No Airlinefind :shrug:")
-                                            else:
-                                                st.write(f"Found AirlineFind :thumbsup:")
-                                            if pricefind == '':
-                                                st.write("No Pricefind :shrug:")
-                                            else:
-                                                st.write(f"Found Pricefind :thumbsup:")
-                                            if len(airlines) == 0:
-                                                st.write("No Airlines parsed list :shrug:")
-                                            else:
-                                                st.write(f"{airlines}")
-                                            if len(prices) == 0:
-                                                st.write("No Prices parsed list :shrug:")
-                                            else:
-                                                st.write(f"{prices}")
-                                            if len(new) == 0:
-                                                st.write("No New parsed list :shrug:")
-                                            else:
-                                                st.write(f"{new}")
-                                                
+                                    except:   
                                             if airline != '':
                                                     print(f"Couldn't find a flight from {origins} to {destination} on {date}, flying exclusively on {airline.lstrip('+').capitalize()}. Please try again.")
                                                     st.write(f"Couldn't find a flight from {origins} to {destination} on {date}, flying exclusively on {airline.lstrip('+').capitalize()}. Please try again.")
