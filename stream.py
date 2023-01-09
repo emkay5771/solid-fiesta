@@ -8,7 +8,6 @@ import os
 from datetime import datetime, timedelta
 
  #TODO: Smartly determine if the user wants to include low cost airlines            
-airlinelist = ["Alaska Airlines", "Allegiant Air", "American Airlines", "Avelo Airlines", "Breeze Airways", "Delta Air Lines", "Eastern Airlines", "Frontier Airlines", "Hawaiian Airlines", "JetBlue", "Spirit Airlines", "Sun Country Airlines", "United Airlines", "Air Wisconsin", "Cape Air", "CommutAir", "Contour Airlines", "Elite Airways", "Endeavor Air", "Envoy Air", "GoJet Airlines", "Horizon Air", "Mesa Airlines", "Piedmont Airlines", "PSA Airlines", "Republic Airways", "Silver Airways", "SkyWest Airlines", "Advanced Air", "Air Sunshine", "Bering Air", "Boutique Air", "Everts Air", "Gem Air", "Grand Canyon Airlines", "Grand Canyon Scenic Airlines", "Grant Aviation", "Griffing Flying Service", "Island Airways", "JSX", "Kenmore Air", "Key Lime Air", "Mokulele Airlines", "New England Airlines", "Penobscot Island Air", "Reliant Air", "San Juan Airlines", "Servant Air", "Southern Airways Express", "Surf Air", "Taquan Air", "Tradewind Aviation", "Ultimate Air Shuttle", "Utah Airways", "Warbelow's Air Ventures", "Wright Air Service", "Air Charter Bahamas", "Air Flight Charters", "Airshare", "Berry Aviation", "Bighorn Airways", "Charter Air Transport", "Choice Airways", "ExcelAire", "Global Crossing Airlines", "Great Lakes Air", "Gryphon Airlines", "IAero Airways", "IBC Airways", "L-3 Flight International Aviation", "Liberty Jet Management", "NetJets", "Omni Air International", "Omni Air Transport", "Pacific Coast Jet", "Pentastar Aviation", "Phoenix Air", "PlaneSense", "Presidential Airways", "Sierra Pacific Airlines", "Skymax", "Songbird Airways", "Stampede Aviation", "Superior Air Charter", "Superior Aviation", "Talkeetna Air Taxi", "Tropic Ocean Airways", "World Atlantic Airlines", "XOJET Aviation LLC", "Other airlines", "Multiple airlines", "Alaska", "Allegiant", "American", "Avelo", "Breeze", "Delta", "Eastern", "Frontier", "Hawaiian", "Spirit", "Sun Country", "United"]
 
 def lowcosts():
     if airlinein != "":
@@ -89,8 +88,8 @@ with st.form(key='my_form', clear_on_submit=False):
                                     try:
                                             # Get the data from the website, using the parameters from start.py, collected above
                                             try:
-                                                headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
-                                                browser = requests.get(f'https://www.google.com/search?q=fly{airline}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}', headers = headers)
+                                                
+                                                browser = requests.get(f'https://www.google.com/search?q=fly{airline}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}', headers={'User-Agent': 'python-requests/2.28.1', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'})
                                                 print(f'https://www.google.com/search?q=fly{airline}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}')
                                             except:
                                                 st.write("Error: Could not connect to Google. Please try again later.")
@@ -122,7 +121,7 @@ with st.form(key='my_form', clear_on_submit=False):
                                                 
                                             #secondary filter for airlines, to remove entries with spaces which are not airline names (primarily flight times) and non-airline results
                                             for air in airlines:
-                                                if " " in air and air not in airlinelist:
+                                                if " " in air and air not in arrays.airlinelist:
                                                     st.write(f"{air} 😠")
                                                     pass
                                                 else:
