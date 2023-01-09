@@ -101,11 +101,15 @@ with st.form(key='my_form', clear_on_submit=False):
         else:
                 nonstop = f''
                 print("Sure thing! We'll search for all flights, including those with with connections. \n")
+        placeholder = st.empty()
+        placeholder2 = st.text('')
+        placeholder3 = st.write('')
 
         if submit:               
             for destination in dest:       
                     for origins in origin:
-                        with st.spinner(f"Searching flights from {origins} to {destination}..."): 
+                        with placeholder:
+                            with st.spinner(f"Searching flights from {origins} to {destination}..."): 
                                 for date in date_list:
                     # Try to extract each flight price from Google search page and print
                                     
@@ -182,7 +186,8 @@ with st.form(key='my_form', clear_on_submit=False):
                                             
                                             # Print the cheapest flight and price
                                             print(f"Flying from {origins} to {destination} on {airline1} on {date} will cost at least ${price}.")
-                                            st.write(f"Flying from {origins} to {destination} on {airline1} on {date} will cost at least ${price}.")
+                                            with placeholder2:
+                                                st.write(f"Flying from {origins} to {destination} on {airline1} on {date} will cost at least ${price}.")
                                             #write to file, organized by date, csv format (date, origin, dest, airline, price)
                                             with open('flights.csv', 'a') as f:
                                                     f.write(f'{date}, {origins}, {destination}, {airline1}, {price}\n')
@@ -193,19 +198,24 @@ with st.form(key='my_form', clear_on_submit=False):
                                     except:   
                                             if airline != '':
                                                     print(f"Couldn't find a flight from {origins} to {destination} on {date}, flying exclusively on {airline.lstrip('+').capitalize()}. Please try again.")
-                                                    st.write(f"Couldn't find a flight from {origins} to {destination} on {date}, flying exclusively on {airline.lstrip('+').capitalize()}. Please try again.")
+                                                    with placeholder2:
+                                                        st.write(f"Couldn't find a flight from {origins} to {destination} on {date}, flying exclusively on {airline.lstrip('+').capitalize()}. Please try again.")
                                             # If specific airline is not selected, skip the entry and inform the user.
                                             else:
                                                     print(f"No such itinerary exists for {origins} to {destination} on {date}. Please try again.")
-                                                    st.write(f"No such itinerary exists for {origins} to {destination} on {date}. Please try again.")
+                                                    with placeholder2:
+                                                        st.write(f"No such itinerary exists for {origins} to {destination} on {date}. Please try again.")
                                             continue
                                 #status update to user
                                 print("Searching... Please Wait")
                 # Let user know that searching is complete
             print("Search complete.")
+            with placeholder:
+                st.success("Search complete.")
+            placeholder2.empty()
         expert=False
             # Parse data collected from Google Search, outputting the average price for each destination at the end of the program.
-        start.parser2(expert)
+        start.parser2(expert, placeholder3)
             
         if os.path.exists('flights.csv'):
                 os.remove("flights.csv")
