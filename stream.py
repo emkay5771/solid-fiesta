@@ -41,8 +41,6 @@ def date_lists(date):
         return date_list
 
 #@st.cache(allow_output_mutation=True, suppress_st_warning=True)
-headers = requests.get("https://www.google.com/search?q=fly+from+sna+to+den+on+2023-01-11+one+way").request.headers
-st.write(headers)
 origin, dest, date_list = [], [], []
 airline, nonstop, lowcost= '', '', ''
 expert = False
@@ -88,17 +86,13 @@ with st.form(key='my_form', clear_on_submit=False):
                     # Try to extract each flight price from Google search page and print
                                     
                                     try:
-                                            # Get the data from the website, using the parameters from start.py, collected above
-                                            try:
-                                                
-                                                browser = requests.get(f'https://www.google.com/search?q=fly{airline}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}', headers={'User-Agent': 'python-requests/2.28.1', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'})
-                                                print(f'https://www.google.com/search?q=fly{airline}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}')
-                                            except:
-                                                st.write("Error: Could not connect to Google. Please try again later.")
-                                            try:
-                                                soup = BeautifulSoup(browser.content, 'html.parser')
-                                            except:
-                                                st.write("Error: Could not parse Google's response. Please try again later.")
+                                            # Get the data from the website, using the parameters from start.py, collected above 
+                                            localheaders={'User-Agent': 'python-requests/2.28.1', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'}
+                                            localheaderstest={'authority': 'ogs.google.com', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8', 'accept-encoding': 'gzip, deflate, br', 'accept-language': 'en-US,en;q=0.6', 'sec-fetch-dest': 'iframe', 'sec-fetch-mode': 'navigate', 'sec-fetch-site': 'same-site','User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36'}
+                                            cookie = {'cookie': 'S=billing-ui-v3=FH3Ei4-EY0uqZUFPl8OfAM-jtN0NKadZ:billing-ui-v3-efe=FH3Ei4-EY0uqZUFPl8OfAM-jtN0NKadZ; OTZ=6839603_76_76_104100_72_446760; SID=SQj585DMpqnMBddPNbpCTHZly72uZLt6jyfVjIdLdBL-nrz2kgeGb0_Kfv8C755Ss4JqLg.; __Secure-1PSID=SQj585DMpqnMBddPNbpCTHZly72uZLt6jyfVjIdLdBL-nrz2YMKId7aBOfm34WZpmwz-kA.; __Secure-3PSID=SQj585DMpqnMBddPNbpCTHZly72uZLt6jyfVjIdLdBL-nrz2RfOTKX2DOF8EQCp-XSBmSw.; HSID=A2e_YBYcdiQmoZclL; SSID=Awnhs3TcdI_wGCbRV; APISID=9Mzj9XE5jrf2O-GP/ATkcd_YhHd5ZMsM3u; SAPISID=4bYXb6FLjL-cdjAb/ApwT_-cO23PlswA6F; __Secure-1PAPISID=4bYXb6FLjL-cdjAb/ApwT_-cO23PlswA6F; __Secure-3PAPISID=4bYXb6FLjL-cdjAb/ApwT_-cO23PlswA6F; SEARCH_SAMESITE=CgQIpZcB; AEC=ARSKqsIlYUFrBWXKnuJ7jwPteR2P_jdkE7RKbE_PCPUKw5NIv_F1XbeokyQ; NID=511=QGftPUJhqj0dQRGutgWjGn92WwnRJ1iy1b1AoI9OGBdkcf_lQwTPa4tm2HOZvpAyqbCqyuqDcBlThxKbsjObtQpbvBWR_Lyi0wyXP7S8U2pwf5Nb0ajF824CFClqx8kr_NdIunkBYTkM3MMW61SxUon9L7FiHQLOL26rVPiwh8rMV0gIGpEzb-G2RAg_lr2dUOljqJq2T7aMOOcrHsZ-gVVSqkSX7Fy141AFgfG5BSxmEWLV8UnD54iUXPLidXrhoxEirh1EK33oG42i_MIismpYLQ2dGc8trcKa_TBK47N-f29Qm7qQ0XiAlFujvOedXa-eaeT1Du_N_1VZtpfze1w2bprP2SVNZvE9JQ5oeE2WpQ; 1P_JAR=2023-01-09-15; SIDCC=AIKkIs3Xq2EN90-AjpmzPuKrm73KqDoH-YtfpNufEqMly8MuOLZRKZRP2NV_i52zulmkb8xH-Y_C; __Secure-1PSIDCC=AIKkIs3nofYE3DM0oiR6vkzlUwR8aK9Uobrd-xweXdV11aaVODdITvFc4VyXYIoQnt2lCusk3oA; __Secure-3PSIDCC=AIKkIs03dMgnfe8oAgr5fXdB6lnbEP6pH-9tZhoK82vBrv7jC9WLlyu5wNl-Juooslpw2oJEZCGx'}
+                                            otherheader={'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36'}
+                                            browser = requests.get(f'https://www.google.com/search?q=fly{airline}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}', headers=localheaders, cookies=cookie)
+                                            soup = BeautifulSoup(browser.content, 'html.parser') 
                                             #collect all potential airlines from the page, using the class name
                                             airlinefind = soup.find_all(class_='BNeawe s3v9rd AP7Wnd')
                                             #collect all potential prices from the page, using the class name
@@ -108,9 +102,6 @@ with st.form(key='my_form', clear_on_submit=False):
                                             x=0
                                             z=0
                                             y=0
-                                            '''while y <= len(airlinefind):
-                                                st.write(f"airlinefind: {airlinefind[y].string}; position {y}")
-                                                y+=1'''
                                             #first layer filters out non-airline results, specifically empty strings, long ones (>19), and southwest (doesn't display price)
                                             for air in airlinefind:
                                                 if airlinefind[x].string != None and airlinefind[x].string != 'Southwest':
