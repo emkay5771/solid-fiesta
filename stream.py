@@ -41,6 +41,8 @@ def date_lists(date):
         return date_list
 
 #@st.cache(allow_output_mutation=True, suppress_st_warning=True)
+headers = requests.get("https://www.google.com/search?q=fly+from+sna+to+den+on+2023-01-11+one+way").request.headers
+st.write(headers)
 origin, dest, date_list = [], [], []
 airline, nonstop, lowcost= '', '', ''
 expert = False
