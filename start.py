@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 import arrays
 import streamlit as st #type: ignore
 
-
+#TODO: fix parser to collect all flights (not just first in each dest origin pair)
 
 def airportinput(origin, dest):
     #likely to be removed, but keeping for now
@@ -207,7 +207,7 @@ def flightoptions(airline, nonstop, lowcost):
 
         return airline, nonstop, lowcost
       
-def parser2(expert, placeholder3):
+def parser2(expert):
     #taking data from fights.csv, make a dict of dicts {dest: {date: price}}
     #open flights.csv
     try:   
@@ -247,7 +247,6 @@ def parser2(expert, placeholder3):
                     
     except:
         print("No data to parse. Please run the program again.")
-        
         st.error("No data to parse. Please run the program again.")
 
 
