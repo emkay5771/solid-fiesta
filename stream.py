@@ -90,7 +90,7 @@ with st.form(key='my_form', clear_on_submit=False):
     nonstops = st.checkbox('Nonstop Flights Only')
     st.write('Note: If you selected a low cost airline above, make sure to leave this checked to prevent bugs.')
     lowcost = st.checkbox('Include Low Cost Airlines', value=True, help="This will include airlines like Spirit, Frontier, and Allegiant. If you select a specific airline, this will be ignored.")
-    collectall = st.checkbox('Collect all data?', value=True)
+    collectall = st.checkbox('Collect all data?', value=True, help="Leaving this enabled will have the program collect all flights available, instead of just the cheapest one. Will affect averages, as well as other things, I'd assume :shrug:.")
     submit = st.form_submit_button('Next Step :arrow_forward:', type="primary")
     if submit:
         date_lists(date)
