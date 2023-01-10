@@ -6,8 +6,16 @@ import start
 import time
 import os
 from datetime import datetime, timedelta
+import numpy as np
+import matplotlib.pyplot as plt
+import july
+from july.utils import date_range
+import pandas as pd
 
- #TODO: Smartly determine if the user wants to include low cost airlines            
+ #TODO: Smartly determine if the user wants to include low cost airlines
+
+st.set_page_config(page_title="MultiDest", page_icon="✈️", layout="wide", initial_sidebar_state="collapsed")
+
 def bugcheck():
     # If specific airline is selected, skip the entry and inform the user.
                                             if soup == '':
@@ -68,19 +76,21 @@ def date_lists(date):
 origin, dest, date_list = [], [], []
 airline, nonstop, lowcost= '', '', ''
 expert = False
+
 with st.form(key='my_form', clear_on_submit=False):
     st.title("MULTIDEST (beta) :airplane:")
     col1, col2 = st.columns(2)
     with col1:
         origin = st.multiselect('Where were you planning on leaving from? 🌎', arrays.airportlist)
     with col2:
-        dest = st.multiselect('Where would you like to go? :airplane:', arrays.airportlist) 
+        dest = st.multiselect('Where would you like to go? 🌎', arrays.airportlist) 
     date = st.date_input('What date would you like to travel?')
     ranges = st.radio('How many days should we search?', ["Day", "Week", "Month"], help='Note that Week is +-3 days, and Month is +-15.')
     airlinein = st.selectbox('If you would like to limit your search to 1 airline, select it here.', arrays.airlinelistoptions, index = 0)
     nonstops = st.checkbox('Nonstop Flights Only')
     st.write('Note: If you selected a low cost airline above, make sure to leave this checked to prevent bugs.')
     lowcost = st.checkbox('Include Low Cost Airlines', value=True, help="This will include airlines like Spirit, Frontier, and Allegiant. If you select a specific airline, this will be ignored.")
+    collectall = st.checkbox('Collect all data?', value=True)
     submit = st.form_submit_button('Next Step :arrow_forward:', type="primary")
     if submit:
         date_lists(date)
@@ -190,6 +200,21 @@ with st.form(key='my_form', clear_on_submit=False):
                                                 st.write(f"Flying from {origins} to {destination} on {airline1} on {date} will cost at least ${price}.")
                                             #write to file, organized by date, csv format (date, origin, dest, airline, price)
                                             with open('flights.csv', 'a') as f:
+                                                if collectall==True and lowcost==True:
+                                                    for n in range(len(sorted_zip)):
+                                                        airline1 = str(sorted_zip[n][0])
+                                                        price = int(sorted_zip[n][1])
+                                                        f.write(f'{date}, {origins}, {destination}, {airline1}, {price}\n')
+                                                elif collectall==True and lowcost==False:
+                                                    for n in range(len(sorted_zip)):
+                                                        if sorted_zip[n][0] in arrays.lowcost:
+                                                            n+=1
+                                                            pass
+                                                        else:
+                                                            airline1 = str(sorted_zip[n][0])
+                                                            price = int(sorted_zip[n][1])
+                                                            f.write(f'{date}, {origins}, {destination}, {airline1}, {price}\n')
+                                                else:
                                                     f.write(f'{date}, {origins}, {destination}, {airline1}, {price}\n')
                                             #close file
                                             f.close()
@@ -215,7 +240,17 @@ with st.form(key='my_form', clear_on_submit=False):
             placeholder2.empty()
         expert=False
             # Parse data collected from Google Search, outputting the average price for each destination at the end of the program.
-        start.parser2(expert, placeholder3)
+        start.parser2(expert)
+        
+        with st.expander("Show Raw Data"):
+            #make a seperate table for each city pair or origin and destination within the csv
+            st.write(pd.read_csv('flights.csv', index_col=0, names=['Date', 'Origin', 'Destination', 'Airline', 'Price']))
+            #display this data as a calendar
+            dates = date_range(date_list[0], date_list[-1])
+            st.write(dates)
+            data = np.random.randint(0, 14, len(dates))
+            #calendar = july.calendar_plot(dates, data)
+        #st.dataframe(calendar)
             
         if os.path.exists('flights.csv'):
                 os.remove("flights.csv")
