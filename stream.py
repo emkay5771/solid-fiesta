@@ -14,7 +14,7 @@ import pandas as pd
 
  #TODO: Smartly determine if the user wants to include low cost airlines
 
-st.set_page_config(page_title="MultiDest", page_icon="✈️", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="MultiDest", page_icon="🛫", layout="wide", initial_sidebar_state="collapsed")
 
 def bugcheck():
     # If specific airline is selected, skip the entry and inform the user.
