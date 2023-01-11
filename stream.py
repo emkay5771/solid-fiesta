@@ -8,8 +8,8 @@ from datetime import timedelta
 import datetime
 from datetime import date
 import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
+import plotly.express as px #type: ignore
+import plotly.graph_objects as go #type: ignore
 import numpy as np
 import matplotlib.pyplot as plt
 import time
@@ -260,41 +260,41 @@ with st.form(key='my_form', clear_on_submit=False):
         st.sidebar.write("Lowest Price for Each Date")
         st.sidebar.write(pd.read_csv('lowest.csv', index_col=0, names=['Date', 'Origin', 'Destination', 'Airline', 'Price']))
         st.sidebar.download_button(label="Download Data", data='lowest.csv', file_name='lowest.csv', mime='text/csv')
+if submit:
+    with st.expander("Show Results"):
+        #display this data as a calendar
+        alldata = pd.read_csv('flights.csv', names=['Date', 'Origin', 'Destination', 'Airline', 'Price'])
+        fig = px.scatter(alldata, x='Date', y='Price', facet_col='Destination', facet_row='Origin', color='Airline', hover_name="Airline", hover_data={'Airline':False, 'Date':False, 'Origin':False, 'Destination':False})
+        fig.layout.hovermode = 'x'
+        #fig.hover_data = ['Origin', 'Destination', 'Airline', 'Price']
+        tab1, tab2, tab3 =st.tabs(['All Data', 'Lowest Price', 'Test'])
+        with tab1:
+            st.plotly_chart(fig)
+        
+        lowdata = pd.read_csv('lowest.csv', names=['Date', 'Origin', 'Destination', 'Airline', 'Price'])
+        fig2 = px.line(lowdata, x='Date', y='Price', color='Origin', hover_data=['Origin', 'Destination'])
+        with tab2:
+            st.plotly_chart(fig2)
 
-with st.expander("Show Results"):
-    #display this data as a calendar
-    alldata = pd.read_csv('flights.csv', names=['Date', 'Origin', 'Destination', 'Airline', 'Price'])
-    fig = px.scatter(alldata, x='Date', y='Price', facet_col='Destination', facet_row='Origin', color='Airline', hover_name="Airline", hover_data={'Airline':False, 'Date':False, 'Origin':False, 'Destination':False})
-    fig.layout.hovermode = 'x'
-    #fig.hover_data = ['Origin', 'Destination', 'Airline', 'Price']
-    tab1, tab2, tab3 =st.tabs(['All Data', 'Lowest Price', 'Test'])
-    with tab1:
-        st.plotly_chart(fig)
-    
-    lowdata = pd.read_csv('lowest.csv', names=['Date', 'Origin', 'Destination', 'Airline', 'Price'])
-    fig2 = px.line(lowdata, x='Date', y='Price', color='Origin', hover_data=['Origin', 'Destination'])
-    with tab2:
-        st.plotly_chart(fig2)
+        with tab3:
+            df = pd.read_csv('lowest.csv', names=['Date', 'Origin', 'Destination', 'Airline', 'Price'])
+            grouped = df.groupby(['Origin', 'Destination'])
 
-    with tab3:
-        df = pd.read_csv('lowest.csv', names=['Date', 'Origin', 'Destination', 'Airline', 'Price'])
-        grouped = df.groupby(['Origin', 'Destination'])
+            data=[]
+            # create a list of trace
+            for (Origin, Destination), group in grouped:
+                text_list = ["Airline: " + str(j) + "<br>Price: $" + str(i) for i,j in zip(group["Price"],group["Airline"])]
+                data.append(go.Scatter(x=group['Date'], y=group['Price'], name=f'{Origin} to {Destination}',line=dict(width=2.5),mode = 'lines+markers',
+                            text=text_list, hovertemplate='%{text}<extra></extra>'))
 
-        data=[]
-        # create a list of trace
-        for (Origin, Destination), group in grouped:
-            text_list = ["Airline: " + str(j) + "<br>Price: $" + str(i) for i,j in zip(group["Price"],group["Airline"])]
-            data.append(go.Scatter(x=group['Date'], y=group['Price'], name=f'{Origin} to {Destination}',line=dict(width=2.5),mode = 'lines+markers',
-                        text=text_list, hovertemplate='%{text}<extra></extra>'))
+            layout = dict(title='Lowest Flight Prices',
+                            xaxis_title='Date',
+                            yaxis_title='Price')
 
-        layout = dict(title='Lowest Flight Prices',
-                        xaxis_title='Date',
-                        yaxis_title='Price')
+            fig3 = go.Figure(data=data, layout=layout)
 
-        fig3 = go.Figure(data=data, layout=layout)
-
-        st.plotly_chart(fig3)
-            
+            st.plotly_chart(fig3)
+                
 
 
             
