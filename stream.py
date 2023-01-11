@@ -196,14 +196,11 @@ with st.form(key='my_form', clear_on_submit=False):
                                                     airline1 = str(sorted_zip[n][0])
                                                     price = int(sorted_zip[n][1])
                                                                     
-                                                                    
-                                                                    
-                                            # If expert mode is enabled, print all airline and price data                
-                                            
                                             # Print the cheapest flight and price
                                             print(f"Flying from {origins} to {destination} on {airline1} on {date} will cost at least ${price}.")
                                             with placeholder2:
                                                 st.write(f"Flying from {origins} to {destination} on {airline1} on {date} will cost at least ${price}.")
+
                                             #write to file, organized by date, csv format (date, origin, dest, airline, price)
                                             with open('flights.csv', 'a') as f:
                                                 if collectall==True and lowcost==True:
@@ -230,8 +227,7 @@ with st.form(key='my_form', clear_on_submit=False):
                                                 price = int(sorted_zip[0][1])
                                                 f.write(f'{date}, {origins}, {destination}, {airline1}, {price}\n')
                                             f.close()
-
-                                        
+    
                                     # If it can't get the data, skip the entry and inform the user.
                                     except:   
                                             if airline != '':
@@ -251,30 +247,24 @@ with st.form(key='my_form', clear_on_submit=False):
             with placeholder:
                 st.success("Search complete.")
             placeholder2.empty()
+
         # Parse data collected from Google Search, outputting the average price for each destination at the end of the program.
         start.parser2(expert)
-
-        st.sidebar.write("Full, Raw Data")
-        st.sidebar.write(pd.read_csv('flights.csv', index_col=0, names=['Date', 'Origin', 'Destination', 'Airline', 'Price']))
-        st.sidebar.download_button(label="Download Data", data='flights.csv', file_name='flights.csv', mime='text/csv')
-        st.sidebar.write("Lowest Price for Each Date")
-        st.sidebar.write(pd.read_csv('lowest.csv', index_col=0, names=['Date', 'Origin', 'Destination', 'Airline', 'Price']))
-        st.sidebar.download_button(label="Download Data", data='lowest.csv', file_name='lowest.csv', mime='text/csv')
+        
 if submit:
     with st.expander("Show Results"):
-        #display this data as a calendar
-        alldata = pd.read_csv('flights.csv', names=['Date', 'Origin', 'Destination', 'Airline', 'Price'])
-        fig = px.scatter(alldata, x='Date', y='Price', facet_col='Destination', facet_row='Origin', color='Airline', hover_name="Airline", hover_data={'Airline':False, 'Date':False, 'Origin':False, 'Destination':False})
-        fig.layout.hovermode = 'x'
-        #fig.hover_data = ['Origin', 'Destination', 'Airline', 'Price']
-        tab1, tab2, tab3 =st.tabs(['All Data', 'Lowest Price', 'Test'])
-        with tab1:
-            st.plotly_chart(fig)
         
-        lowdata = pd.read_csv('lowest.csv', names=['Date', 'Origin', 'Destination', 'Airline', 'Price'])
-        fig2 = px.line(lowdata, x='Date', y='Price', color='Origin', hover_data=['Origin', 'Destination'])
-        with tab2:
-            st.plotly_chart(fig2)
+
+        tab1, tab3, tab4 =st.tabs(['All Data', 'Lowest Price', 'Raw Data/ Export'])
+
+        with tab1:
+            alldata = pd.read_csv('flights.csv', names=['Date', 'Origin', 'Destination', 'Airline', 'Price'])
+            fig = px.scatter(alldata, x='Date', y='Price', facet_col='Destination', facet_row='Origin', color='Airline', hover_name="Airline", hover_data={'Airline':False, 'Date':False, 'Origin':False, 'Destination':False})
+            fig.layout.hovermode = 'x'
+            st.plotly_chart(fig, use_container_width=True)
+        
+        
+        
 
         with tab3:
             df = pd.read_csv('lowest.csv', names=['Date', 'Origin', 'Destination', 'Airline', 'Price'])
@@ -283,7 +273,7 @@ if submit:
             data=[]
             # create a list of trace
             for (Origin, Destination), group in grouped:
-                text_list = ["Airline: " + str(j) + "<br>Price: $" + str(i) for i,j in zip(group["Price"],group["Airline"])]
+                text_list = ["City Pair: " + str(a) + "-" + str(b) + "<br>Airline: " + str(j) + "<br>Price: $" + str(i) for i,j,a,b in zip(group["Price"],group["Airline"],group["Origin"],group["Destination"])]
                 data.append(go.Scatter(x=group['Date'], y=group['Price'], name=f'{Origin} to {Destination}',line=dict(width=2.5),mode = 'lines+markers',
                             text=text_list, hovertemplate='%{text}<extra></extra>'))
 
@@ -293,8 +283,20 @@ if submit:
 
             fig3 = go.Figure(data=data, layout=layout)
 
-            st.plotly_chart(fig3)
-                
+            st.plotly_chart(fig3, use_container_width=True)
+        
+        with tab4:
+            col1, col2 = st.columns(2)
+
+            with col1:
+                st.write("Full, Raw Data")
+                st.write(pd.read_csv('flights.csv', index_col=0, names=['Date', 'Origin', 'Destination', 'Airline', 'Price']))
+                st.download_button(label="Download Data", data='flights.csv', file_name='flights.csv', mime='text/csv')
+
+            with col2:
+                st.write("Lowest Price for Each Date")
+                st.write(pd.read_csv('lowest.csv', index_col=0, names=['Date', 'Origin', 'Destination', 'Airline', 'Price']))
+                st.download_button(label="Download Data", data='lowest.csv', file_name='lowest.csv', mime='text/csv')
 
 
             
