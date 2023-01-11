@@ -10,9 +10,7 @@ from datetime import date
 import pandas as pd
 import plotly.express as px #type: ignore
 import plotly.graph_objects as go #type: ignore
-import numpy as np
-import matplotlib.pyplot as plt
-import time
+
 
  #TODO: Smartly determine if the user wants to include low cost airlines
 
