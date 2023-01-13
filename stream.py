@@ -129,10 +129,9 @@ with st.form(key='my_form', clear_on_submit=False):
                                     
                                     try:
                                             # Get the data from the website, using the parameters from start.py, collected above
-                                            proxy = {'http': 'http://34.102.179.21:80'} 
                                             localheaders={'User-Agent': 'python-requests/2.28.1', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'}
                                             otherheader={'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36'}
-                                            browser = requests.get(f'https://www.google.com/search?q=fly{airline}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}', headers=localheaders, proxies=proxy)
+                                            browser = requests.get(f'https://www.google.com/search?q=fly{airline}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}', headers=localheaders)
                                             soup = BeautifulSoup(browser.content, 'html.parser') 
                                             #collect all potential airlines from the page, using the class name
                                             airlinefind = soup.find_all(class_='BNeawe s3v9rd AP7Wnd')
