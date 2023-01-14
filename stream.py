@@ -8,18 +8,16 @@ import os
 from datetime import timedelta
 import datetime
 from datetime import date
+from datetime import datetime as dt
 import pandas as pd
 import plotly.express as px #type: ignore
 import plotly.graph_objects as go #type: ignore
+import glob
 
 
  #TODO: Smartly determine if the user wants to include low cost airlines
 
 st.set_page_config(page_title="MultiDest", page_icon="🛫", layout="wide", initial_sidebar_state="collapsed")
-if id not in st.session_state:
-    st.session_state['id'] = random.randint(1, 100000)
-session = st.session_state.id
-st.write(st.session_state.id)
 def bugcheck():
     # If specific airline is selected, skip the entry and inform the user.
                                             if soup == '':
@@ -80,6 +78,8 @@ def date_lists(date):
 origin, dest, date_list = [], [], []
 airline, nonstop, lowcost= '', '', ''
 expert = False
+
+
 with st.form(key='my_form', clear_on_submit=False):
     st.title("MULTIDEST (beta) :airplane:")
     col1, col2 = st.columns(2)
@@ -97,6 +97,9 @@ with st.form(key='my_form', clear_on_submit=False):
     submit = st.form_submit_button('Begin Search! :arrow_forward:', type="primary")
 
 if submit:
+    if id not in st.session_state:
+        st.session_state['id'] = dt.now()
+    session = st.session_state.id
     date_lists(date)
     print(date_list)
     if os.path.exists(f'flights{session}.csv'):
@@ -297,14 +300,38 @@ if submit:
 
             with col1:
                 st.write("Full, Raw Data")
-                st.write(pd.read_csv(f'flights{session}.csv', index_col=0, names=['Date', 'Origin', 'Destination', 'Airline', 'Price']))
-                st.download_button(label="Download Data", data='flights.csv', file_name='flights.csv', mime='text/csv')
+                flightcsv = st.write(pd.read_csv(f'flights{session}.csv', index_col=0, names=['Date', 'Origin', 'Destination', 'Airline', 'Price']))
+                with open(f'flights{session}.csv', 'r') as f:
+                    st.download_button(label="Download Data", data=f, file_name='flights.csv', mime='text/csv')
 
             with col2:
                 st.write("Lowest Price for Each Date")
-                st.write(pd.read_csv(f'lowest{session}.csv', index_col=0, names=['Date', 'Origin', 'Destination', 'Airline', 'Price']))
-                st.download_button(label="Download Data", data='lowest.csv', file_name='lowest.csv', mime='text/csv')
+                lowestcsv = st.write(pd.read_csv(f'lowest{session}.csv', index_col=0, names=['Date', 'Origin', 'Destination', 'Airline', 'Price']))
+                with open(f'lowest{session}.csv', 'r') as f:
+                    st.download_button(label="Download Data", data=f, file_name='lowest.csv', mime='text/csv')
 
+
+    if glob.glob("flights*.csv"):
+        for file in glob.glob("flights*.csv"):
+            # remove the prefix "flights" and the suffix ".csv" from the file name
+            timestamp = file.lstrip("flights").rstrip(".csv")
+            # parse the timestamp using the format string "%Y-%m-%d %H:%M:%S.%f"
+            file_datetime = dt.strptime(timestamp, "%Y-%m-%d %H:%M:%S.%f")
+            # check if the file is older than 30 minutes
+            if dt.now() - file_datetime > timedelta(minutes=10):
+                if file != f'flights{session}.csv':
+                    os.remove(file)
+
+    if glob.glob("lowest*.csv"):
+        for file in glob.glob("lowest*.csv"):
+            # remove the prefix "flights" and the suffix ".csv" from the file name
+            timestamp = file.lstrip("lowest").rstrip(".csv")
+            # parse the timestamp using the format string "%Y-%m-%d %H:%M:%S.%f"
+            file_datetime = dt.strptime(timestamp, "%Y-%m-%d %H:%M:%S.%f")
+            # check if the file is older than 30 minutes
+            if dt.now() - file_datetime > timedelta(minutes=10):
+                if file != f'lowest{session}.csv':
+                    os.remove(file)
 
             
         
