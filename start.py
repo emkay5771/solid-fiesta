@@ -207,11 +207,11 @@ def flightoptions(airline, nonstop, lowcost):
 
         return airline, nonstop, lowcost
       
-def parser2(expert):
+def parser2(expert, session):
     #taking data from fights.csv, make a dict of dicts {dest: {date: price}}
     #open flights.csv
     try:   
-        with open('flights.csv', 'r') as f:
+        with open(f'flights{session}.csv', 'r') as f:
             #get average price for each destination
             reader = csv.reader(f)
             destlist = []
