@@ -18,7 +18,6 @@ import glob
 
 st.set_page_config(page_title="MultiDest", page_icon="🛫", layout="wide", initial_sidebar_state="collapsed")
 
-
 def lowcosts():
     if airlinein != "":
         lowcost == True
@@ -191,7 +190,8 @@ if submit:
                                             for n in range(len(sorted_zip)):
                                                 airline1 = str(sorted_zip[n][0])
                                                 price = int(sorted_zip[n][1])
-                                                f.write(f'{date}, {origins}, {destination}, {airline1}, {price}\n')
+                                                link = f"https://www.google.com/search?q=fly+{airline1}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}"
+                                                f.write(f'{date}, {origins}, {destination}, {airline1}, {price}, {link}\n')
                                         elif collectall==True and lowcost==False:
                                             for n in range(len(sorted_zip)):
                                                 if sorted_zip[n][0] in arrays.lowcost:
@@ -200,7 +200,8 @@ if submit:
                                                 else:
                                                     airline1 = str(sorted_zip[n][0])
                                                     price = int(sorted_zip[n][1])
-                                                    f.write(f'{date}, {origins}, {destination}, {airline1}, {price}\n')
+                                                    link = f"https://www.google.com/search?q=fly+{airline1}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}"
+                                                    f.write(f'{date}, {origins}, {destination}, {airline1}, {price}, {link}\n')
                                         else:
                                             f.write(f'{date}, {origins}, {destination}, {airline1}, {price}\n')
                                     #close file
@@ -209,7 +210,8 @@ if submit:
                                     with open(f'lowest{session}.csv', 'a') as f:
                                         airline1 = str(sorted_zip[0][0])
                                         price = int(sorted_zip[0][1])
-                                        f.write(f'{date}, {origins}, {destination}, {airline1}, {price}\n')
+                                        link = f"https://www.google.com/search?q=fly+{airline1}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}"
+                                        f.write(f'{date}, {origins}, {destination}, {airline1}, {price}, {link}\n')
                                     f.close()
 
                             # If it can't get the data, skip the entry and inform the user.
@@ -241,46 +243,59 @@ if submit:
         tab1, tab2, tab3 =st.tabs(['All Data', 'Lowest Price', 'Raw Data/ Export'])
 
         with tab1:
-            alldata = pd.read_csv(f'flights{session}.csv', names=['Date', 'Origin', 'Destination', 'Airline', 'Price'])
-            if len(origin) > 1.5 or len(dest) >= 1.5:
-                fig = px.scatter(alldata, x='Date', y='Price', facet_col='Destination', facet_row='Origin', color='Airline', hover_name="Airline", hover_data={'Airline':False, 'Date':False, 'Origin':False, 'Destination':False})
+            alldata = pd.read_csv(f'flights{session}.csv', names=['Date', 'Origin', 'Destination', 'Airline', 'Price', 'Link'])
+            if len(origin) >= 1.5 and len(dest) <= 1:
+                fig = px.scatter(alldata, x='Date', y='Price', facet_col='Origin', facet_row='Destination', color='Airline', hover_name="Airline", hover_data={'Airline':False, 'Date':False, 'Origin':False, 'Destination':False})
                 fig.layout.hovermode = 'x'
                 st.plotly_chart(fig, use_container_width=True)
+            elif len(origin) >= 1.5 or len(dest) >= 1.5:
+                fig = px.scatter(alldata, x='Date', y='Price', facet_col='Destination', facet_row='Origin', color='Airline', hover_name="Airline", hover_data={'Airline':False, 'Date':False, 'Origin':False, 'Destination':False})
+                fig.layout.hovermode = 'x'
+                st.plotly_chart(fig, use_container_width=True)   
             else:
                 fig = px.bar(alldata, x='Airline', y='Price', color='Airline', facet_col='Date', hover_name="Airline", hover_data={'Airline':False, 'Date':False, 'Origin':False, 'Destination':False})
                 st.plotly_chart(fig, use_container_width=True)
         
         with tab2:
-            df = pd.read_csv(f'lowest{session}.csv', names=['Date', 'Origin', 'Destination', 'Airline', 'Price'])
+            df = pd.read_csv(f'lowest{session}.csv', names=['Date', 'Origin', 'Destination', 'Airline', 'Price', 'Link'])
             grouped = df.groupby(['Origin', 'Destination'])
 
-            data=[]
-            # create a list of trace
-            for (Origin, Destination), group in grouped:
-                text_list = ["City Pair: " + str(a) + "-" + str(b) + "<br>Airline: " + str(j) + "<br>Price: $" + str(i) for i,j,a,b in zip(group["Price"],group["Airline"],group["Origin"],group["Destination"])]
-                data.append(go.Scatter(x=group['Date'], y=group['Price'], name=f'{Origin} to {Destination}',line=dict(width=2.5),mode = 'lines+markers',
-                            text=text_list, hovertemplate='%{text}<extra></extra>'))
+            if len(date_list) >= 1.5 or len(origin) >= 1.5 or len(dest) >= 1.5:
+                data=[]
+                # create a list of trace
+                for (Origin, Destination), group in grouped:
+                    text_list = ["City Pair: " + str(a) + "-" + str(b) + "<br>Airline: " + str(j) + "<br>Price: $" + str(i) for i,j,a,b in zip(group["Price"],group["Airline"],group["Origin"],group["Destination"])]
+                    data.append(go.Scatter(x=group['Date'], y=group['Price'], name=f'{Origin} to {Destination}',line=dict(width=2.5),mode = 'lines+markers',
+                                text=text_list, hovertemplate='%{text}<extra></extra>'))
 
-            layout = dict(title='Lowest Flight Prices',
-                            xaxis_title='Date',
-                            yaxis_title='Price')
+                layout = dict(title='Lowest Flight Prices',
+                                xaxis_title='Date',
+                                yaxis_title='Price')
 
-            fig3 = go.Figure(data=data, layout=layout)
+                fig3 = go.Figure(data=data, layout=layout)
 
-            st.plotly_chart(fig3, use_container_width=True)
+                st.plotly_chart(fig3, use_container_width=True)
+            else:
+                if len(origin) >= 1.5 and len(dest) <= 1:
+                    fig = px.bar(df, x='Origin', y='Price', color='Airline', facet_col='Date', hover_name="Airline", hover_data={'Airline':False, 'Date':False, 'Origin':False, 'Destination':False})
+                else:
+                    fig = px.bar(df, x='Destination', y='Price', color='Airline', facet_col='Date', hover_name="Airline", hover_data={'Airline':False, 'Date':False, 'Origin':False, 'Destination':False})
+                st.plotly_chart(fig, use_container_width=True)
+                
         
         with tab3:
             col1, col2 = st.columns(2)
 
             with col1:
                 st.write("Full, Raw Data")
-                flightcsv = st.write(pd.read_csv(f'flights{session}.csv', index_col=0, names=['Date', 'Origin', 'Destination', 'Airline', 'Price']))
+                flightcsv = st.write(pd.read_csv(f'flights{session}.csv', index_col=0, names=['Date', 'Origin', 'Destination', 'Airline', 'Price', 'Link']))
                 with open(f'flights{session}.csv', 'r') as f:
                     st.download_button(label="Download Data", data=f, file_name='flights.csv', mime='text/csv')
 
             with col2:
                 st.write("Lowest Price for Each Date")
-                lowestcsv = st.write(pd.read_csv(f'lowest{session}.csv', index_col=0, names=['Date', 'Origin', 'Destination', 'Airline', 'Price']))
+                lowest=pd.read_csv(f'lowest{session}.csv', index_col=0, names=['Date', 'Origin', 'Destination', 'Airline', 'Price', 'Link'])
+                st.write(lowest)
                 with open(f'lowest{session}.csv', 'r') as f:
                     st.download_button(label="Download Data", data=f, file_name='lowest.csv', mime='text/csv')
 
