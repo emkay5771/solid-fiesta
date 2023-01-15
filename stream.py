@@ -1,5 +1,4 @@
-import random
-import streamlit as st #type: ignore
+import streamlit as st 
 import arrays
 import requests
 from bs4 import BeautifulSoup
@@ -10,38 +9,15 @@ import datetime
 from datetime import date
 from datetime import datetime as dt
 import pandas as pd
-import plotly.express as px #type: ignore
-import plotly.graph_objects as go #type: ignore
+import plotly.express as px 
+import plotly.graph_objects as go 
 import glob
 
 
  #TODO: Smartly determine if the user wants to include low cost airlines
 
 st.set_page_config(page_title="MultiDest", page_icon="🛫", layout="wide", initial_sidebar_state="collapsed")
-def bugcheck():
-    # If specific airline is selected, skip the entry and inform the user.
-                                            if soup == '':
-                                                st.write("No Soup :shrug:")
-                                            if airlinefind == '':
-                                                st.write("No Airlinefind :shrug:")
-                                            else:
-                                                st.write(f"Found AirlineFind :thumbsup:")
-                                            if pricefind == '':
-                                                st.write("No Pricefind :shrug:")
-                                            else:
-                                                st.write(f"Found Pricefind :thumbsup:")
-                                            if len(airlines) == 0:
-                                                st.write("No Airlines parsed list :shrug:")
-                                            else:
-                                                st.write(f"{airlines}")
-                                            if len(prices) == 0:
-                                                st.write("No Prices parsed list :shrug:")
-                                            else:
-                                                st.write(f"{prices}")
-                                            if len(new) == 0:
-                                                st.write("No New parsed list :shrug:")
-                                            else:
-                                                st.write(f"{new}")
+
 
 def lowcosts():
     if airlinein != "":
@@ -79,7 +55,6 @@ origin, dest, date_list = [], [], []
 airline, nonstop, lowcost= '', '', ''
 expert = False
 
-
 with st.form(key='my_form', clear_on_submit=False):
     st.title("MULTIDEST (beta) :airplane:")
     col1, col2 = st.columns(2)
@@ -92,7 +67,7 @@ with st.form(key='my_form', clear_on_submit=False):
     airlinein = st.selectbox('If you would like to limit your search to 1 airline, select it here.', arrays.airlinelistoptions, index = 0)
     nonstops = st.checkbox('Nonstop Flights Only')
     st.write('Note: If you selected a low cost airline above, make sure to leave this checked to prevent bugs.')
-    lowcost = st.checkbox('Include Low Cost Airlines', value=True, help="This will include airlines like Spirit, Frontier, and Allegiant. If you select a specific airline, this will be ignored.")
+    lowcost = st.checkbox('Include Low Cost Airlines', value=True, help="This will include airlines like Spirit, Frontier, and Allegiant. If you select a specific airline, this will be ignored.", key='lowcost')
     collectall = st.checkbox('Collect all data?', value=True, help="Leaving this enabled will have the program collect all flights available, instead of just the cheapest one. Will affect averages, as well as other things, I'd assume :shrug:.")
     submit = st.form_submit_button('Begin Search! :arrow_forward:', type="primary")
 
@@ -130,8 +105,7 @@ if submit:
     placeholder = st.empty()
     placeholder2 = st.text('')
     placeholder3 = st.write('')
-
-if submit:               
+              
     for destination in dest:       
             for origins in origin:
                 with placeholder:
@@ -261,22 +235,22 @@ if submit:
 # Parse data collected from Google Search, outputting the average price for each destination at the end of the program.
     start.parser2(expert, session)
         
-if submit:
     with st.expander("Show Results"):
         
 
-        tab1, tab3, tab4 =st.tabs(['All Data', 'Lowest Price', 'Raw Data/ Export'])
+        tab1, tab2, tab3 =st.tabs(['All Data', 'Lowest Price', 'Raw Data/ Export'])
 
         with tab1:
             alldata = pd.read_csv(f'flights{session}.csv', names=['Date', 'Origin', 'Destination', 'Airline', 'Price'])
-            fig = px.scatter(alldata, x='Date', y='Price', facet_col='Destination', facet_row='Origin', color='Airline', hover_name="Airline", hover_data={'Airline':False, 'Date':False, 'Origin':False, 'Destination':False})
-            fig.layout.hovermode = 'x'
-            st.plotly_chart(fig, use_container_width=True)
+            if len(origin) > 1.5 or len(dest) >= 1.5:
+                fig = px.scatter(alldata, x='Date', y='Price', facet_col='Destination', facet_row='Origin', color='Airline', hover_name="Airline", hover_data={'Airline':False, 'Date':False, 'Origin':False, 'Destination':False})
+                fig.layout.hovermode = 'x'
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                fig = px.bar(alldata, x='Airline', y='Price', color='Airline', facet_col='Date', hover_name="Airline", hover_data={'Airline':False, 'Date':False, 'Origin':False, 'Destination':False})
+                st.plotly_chart(fig, use_container_width=True)
         
-        
-        
-
-        with tab3:
+        with tab2:
             df = pd.read_csv(f'lowest{session}.csv', names=['Date', 'Origin', 'Destination', 'Airline', 'Price'])
             grouped = df.groupby(['Origin', 'Destination'])
 
@@ -295,7 +269,7 @@ if submit:
 
             st.plotly_chart(fig3, use_container_width=True)
         
-        with tab4:
+        with tab3:
             col1, col2 = st.columns(2)
 
             with col1:
@@ -317,7 +291,7 @@ if submit:
             timestamp = file.lstrip("flights").rstrip(".csv")
             # parse the timestamp using the format string "%Y-%m-%d %H:%M:%S.%f"
             file_datetime = dt.strptime(timestamp, "%Y-%m-%d %H:%M:%S.%f")
-            # check if the file is older than 30 minutes
+            # check if the file is older than 10 minutes
             if dt.now() - file_datetime > timedelta(minutes=10):
                 if file != f'flights{session}.csv':
                     os.remove(file)
@@ -328,7 +302,7 @@ if submit:
             timestamp = file.lstrip("lowest").rstrip(".csv")
             # parse the timestamp using the format string "%Y-%m-%d %H:%M:%S.%f"
             file_datetime = dt.strptime(timestamp, "%Y-%m-%d %H:%M:%S.%f")
-            # check if the file is older than 30 minutes
+            # check if the file is older than 10 minutes
             if dt.now() - file_datetime > timedelta(minutes=10):
                 if file != f'lowest{session}.csv':
                     os.remove(file)
