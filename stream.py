@@ -112,122 +112,124 @@ if submit:
                         for date in date_list:
             # Try to extract each flight price from Google search page and print
                             
-                            try:
-                                    # Get the data from the website, using the parameters from start.py, collected above
-                                    localheaders={'User-Agent': 'python-requests/2.28.1', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'}
-                                    otherheader={'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36'}
-                                    browser = requests.get(f'https://www.google.com/search?q=fly{airline}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}', headers=localheaders)
-                                    soup = BeautifulSoup(browser.content, 'html.parser') 
-                                    #collect all potential airlines from the page, using the class name
-                                    airlinefind = soup.find_all(class_='BNeawe s3v9rd AP7Wnd')
-                                    #collect all potential prices from the page, using the class name
-                                    pricefind = soup.find_all(class_='BNeawe DwrKqd s3v9rd AP7Wnd')
-                                    # initialize the price and airline arrays needed for appending later, as well as variables for the price and airline indices
-                                    airlines, prices, new=[], [], []
-                                    x=0
-                                    z=0
-                                    y=0
-                                    #first layer filters out non-airline results, specifically empty strings, long ones (>19), and southwest (doesn't display price)
-                                    for air in airlinefind:
-                                        if airlinefind[x].string != None and airlinefind[x].string != 'Southwest':
-                                            if len(airlinefind[x].string) > 19:
-                                                #st.write(f"Broke at 112; {airlinefind[x].string}, position {x} :thumbsdown:")
-                                                break                                                   
-                                            airlines.append(airlinefind[x].string)
-                                            #st.write(f"{airlinefind[x].string} :thumbsup:")                                                    
-                                        x+=1
-                                        
-                                    #secondary filter for airlines, to remove entries with spaces which are not airline names (primarily flight times) and non-airline results
-                                    for air in airlines:
-                                        if " " in air and air not in arrays.airlinelist:
-                                            #st.write(f"{air} 😠")
-                                            pass
+                                try:
+                                        # Get the data from the website, using the parameters from start.py, collected above
+                                        localheaders={'User-Agent': 'python-requests/2.28.1', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'}
+                                        otherheader={'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36'}
+                                        browser = requests.get(f'https://www.google.com/search?q=fly{airline}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}', headers=localheaders)
+                                        soup = BeautifulSoup(browser.content, 'html.parser') 
+                                        #collect all potential airlines from the page, using the class name
+                                        airlinefind = soup.find_all(class_='BNeawe s3v9rd AP7Wnd')
+                                        #collect all potential prices from the page, using the class name
+                                        pricefind = soup.find_all(class_='BNeawe DwrKqd s3v9rd AP7Wnd')
+                                        # initialize the price and airline arrays needed for appending later, as well as variables for the price and airline indices
+                                        airlines, prices, new=[], [], []
+                                        x=0
+                                        z=0
+                                        y=0
+                                        #first layer filters out non-airline results, specifically empty strings, long ones (>19), and southwest (doesn't display price)
+                                        for air in airlinefind:
+                                            if airlinefind[x].string != None and airlinefind[x].string != 'Southwest':
+                                                if len(airlinefind[x].string) > 19:
+                                                    #st.write(f"Broke at 112; {airlinefind[x].string}, position {x} :thumbsdown:")
+                                                    break                                                   
+                                                airlines.append(airlinefind[x].string)
+                                                #st.write(f"{airlinefind[x].string} :thumbsup:")                                                    
+                                            x+=1
+                                            
+                                        #secondary filter for airlines, to remove entries with spaces which are not airline names (primarily flight times) and non-airline results
+                                        for air in airlines:
+                                            if " " in air and air not in arrays.airlinelist:
+                                                #st.write(f"{air} 😠")
+                                                pass
+                                            else:
+                                                new.append(air)
+                                                #st.write(f"{air} :airplane:")
+
+                                        #make list of prices, removing blank entries
+                                        for value in pricefind:
+                                            if pricefind[z].string != None: 
+                                                prices.append(int(pricefind[z].string.lstrip('$')))
+                                                #st.write(f"Price appended 💵")    
+                                            z+=1
+
+                                        # match prices to airlines
+                                        zip_iterator = zip(new, prices)
+                                        #sort zip_iterator by lowest price
+                                        sorted_zip = sorted(zip_iterator, key=lambda x: x[1])
+                                    # If it can't get the data, skip the entry and inform the user.
+
+                                     #select cheapest flight and airline, adding to zipped list below
+                                #if the user wants to see all airlines (see start.flightoptions above), including low cost ones, this will be displayed
+                                        if lowcost == True:                                               
+                                                airline1 = str(sorted_zip[0][0])
+                                                price = int(sorted_zip[0][1])
+                                        #if the user does not want to see low cost airlines, as determined in start.flightoptions, this will engage instead
+                                        else: 
+                                                n=0   
+                                                # iterate through sorted list until a non-low cost airline is found    
+                                                while sorted_zip[n][0] in arrays.lowcost:
+                                                        #if expert mode is enabled, print the low cost airlines that are being skipped
+                                                        if expert == True:
+                                                                print(f"Ifed: {sorted_zip[n][0]}")
+                                                        n+=1
+                                                # if expert mode is enabled, print the non-low cost airline that was selected
+                                                if expert == True:
+                                                        print(f"Elsed: {sorted_zip[n][0]}")
+                                                #assign the non-low cost airline and price to variables
+                                                airline1 = str(sorted_zip[n][0])
+                                                price = int(sorted_zip[n][1])
+                                                        
+                                except:   
+                                        if airline != '':
+                                                print(f"Couldn't find a flight from {origins} to {destination} on {date}, flying exclusively on {airline.lstrip('+').capitalize()}. Please try again.")
+                                                with placeholder2:
+                                                    st.write(f"Couldn't find a flight from {origins} to {destination} on {date}, flying exclusively on {airline.lstrip('+').capitalize()}. Please try again.")
+                                        # If specific airline is not selected, skip the entry and inform the user.
                                         else:
-                                            new.append(air)
-                                            #st.write(f"{air} :airplane:")
+                                                print(f"No such itinerary exists for {origins} to {destination} on {date}. Please try again.")
+                                                with placeholder2:
+                                                    st.write(f"No such itinerary exists for {origins} to {destination} on {date}. Please try again.")
+                                        continue
+                               
+                                # Print the cheapest flight and price
+                                print(f"Flying from {origins} to {destination} on {airline1} on {date} will cost at least ${price}.")
+                                with placeholder2:
+                                    st.write(f"Flying from {origins} to {destination} on {airline1} on {date} will cost at least ${price}.")
 
-                                    #make list of prices, removing blank entries
-                                    for value in pricefind:
-                                        if pricefind[z].string != None: 
-                                            prices.append(int(pricefind[z].string.lstrip('$')))
-                                            #st.write(f"Price appended 💵")    
-                                        z+=1
-
-                                    # match prices to airlines
-                                    zip_iterator = zip(new, prices)
-                                    #sort zip_iterator by lowest price
-                                    sorted_zip = sorted(zip_iterator, key=lambda x: x[1])
-                                    
-                                    #select cheapest flight and airline, adding to zipped list below
-                                    #if the user wants to see all airlines (see start.flightoptions above), including low cost ones, this will be displayed
-                                    if lowcost == True:                                               
-                                            airline1 = str(sorted_zip[0][0])
-                                            price = int(sorted_zip[0][1])
-                                    #if the user does not want to see low cost airlines, as determined in start.flightoptions, this will engage instead
-                                    else: 
-                                            n=0   
-                                            # iterate through sorted list until a non-low cost airline is found    
-                                            while sorted_zip[n][0] in arrays.lowcost:
-                                                    #if expert mode is enabled, print the low cost airlines that are being skipped
-                                                    if expert == True:
-                                                            print(f"Ifed: {sorted_zip[n][0]}")
-                                                    n+=1
-                                            # if expert mode is enabled, print the non-low cost airline that was selected
-                                            if expert == True:
-                                                    print(f"Elsed: {sorted_zip[n][0]}")
-                                            #assign the non-low cost airline and price to variables
+                                #write to file, organized by date, csv format (date, origin, dest, airline, price)
+                                with open(f'flights{session}.csv', 'a') as f:
+                                    if collectall==True and lowcost==True:
+                                        for n in range(len(sorted_zip)):
                                             airline1 = str(sorted_zip[n][0])
                                             price = int(sorted_zip[n][1])
-                                                            
-                                    # Print the cheapest flight and price
-                                    print(f"Flying from {origins} to {destination} on {airline1} on {date} will cost at least ${price}.")
-                                    with placeholder2:
-                                        st.write(f"Flying from {origins} to {destination} on {airline1} on {date} will cost at least ${price}.")
-
-                                    #write to file, organized by date, csv format (date, origin, dest, airline, price)
-                                    with open(f'flights{session}.csv', 'a') as f:
-                                        if collectall==True and lowcost==True:
-                                            for n in range(len(sorted_zip)):
+                                            link = f"https://www.google.com/search?q=fly+{airline1}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}"
+                                            f.write(f'{date}, {origins}, {destination}, {airline1}, {price}, {link}\n')
+                                    elif collectall==True and lowcost==False:
+                                        for n in range(len(sorted_zip)):
+                                            if sorted_zip[n][0] in arrays.lowcost:
+                                                n+=1
+                                                pass
+                                            else:
                                                 airline1 = str(sorted_zip[n][0])
                                                 price = int(sorted_zip[n][1])
                                                 link = f"https://www.google.com/search?q=fly+{airline1}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}"
                                                 f.write(f'{date}, {origins}, {destination}, {airline1}, {price}, {link}\n')
-                                        elif collectall==True and lowcost==False:
-                                            for n in range(len(sorted_zip)):
-                                                if sorted_zip[n][0] in arrays.lowcost:
-                                                    n+=1
-                                                    pass
-                                                else:
-                                                    airline1 = str(sorted_zip[n][0])
-                                                    price = int(sorted_zip[n][1])
-                                                    link = f"https://www.google.com/search?q=fly+{airline1}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}"
-                                                    f.write(f'{date}, {origins}, {destination}, {airline1}, {price}, {link}\n')
-                                        else:
-                                            f.write(f'{date}, {origins}, {destination}, {airline1}, {price}\n')
-                                    #close file
-                                    f.close()
-                                    #collect lowest price for each date
-                                    with open(f'lowest{session}.csv', 'a') as f:
-                                        airline1 = str(sorted_zip[0][0])
-                                        price = int(sorted_zip[0][1])
-                                        link = f"https://www.google.com/search?q=fly+{airline1}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}"
-                                        f.write(f'{date}, {origins}, {destination}, {airline1}, {price}, {link}\n')
-                                    f.close()
-
-                            # If it can't get the data, skip the entry and inform the user.
-                            except:   
-                                    if airline != '':
-                                            print(f"Couldn't find a flight from {origins} to {destination} on {date}, flying exclusively on {airline.lstrip('+').capitalize()}. Please try again.")
-                                            with placeholder2:
-                                                st.write(f"Couldn't find a flight from {origins} to {destination} on {date}, flying exclusively on {airline.lstrip('+').capitalize()}. Please try again.")
-                                    # If specific airline is not selected, skip the entry and inform the user.
                                     else:
-                                            print(f"No such itinerary exists for {origins} to {destination} on {date}. Please try again.")
-                                            with placeholder2:
-                                                st.write(f"No such itinerary exists for {origins} to {destination} on {date}. Please try again.")
-                                    continue
-                        #status update to user
-                        print("Searching... Please Wait")
+                                        f.write(f'{date}, {origins}, {destination}, {airline1}, {price}\n')
+                                #close file
+                                f.close()
+                                #collect lowest price for each date
+                                with open(f'lowest{session}.csv', 'a') as f:
+                                    airline1 = str(sorted_zip[0][0])
+                                    price = int(sorted_zip[0][1])
+                                    link = f"https://www.google.com/search?q=fly+{airline1}+from+{origins}+to+{destination}+on+{date}+one+way{nonstop}"
+                                    f.write(f'{date}, {origins}, {destination}, {airline1}, {price}, {link}\n')
+                                f.close()
+
+                                
+                            #status update to user
+                                print("Searching... Please Wait")
     # Let user know that searching is complete
     print("Search complete.")
     with placeholder:
