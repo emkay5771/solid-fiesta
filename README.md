@@ -1,6 +1,6 @@
 ---
 title: MultiDest
-emoji: ::plane::
+emoji: 🛫
 colorFrom: indigo
 colorTo: red
 sdk: streamlit
